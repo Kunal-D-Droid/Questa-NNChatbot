@@ -1,0 +1,848 @@
+{
+    "conversations": [
+        {
+            "input": "hello",
+            "output": "Hello! How can I help you with your hotel booking today?"
+        },
+        {
+            "input": "hi there",
+            "output": "Hi! I'm your hotel booking assistant. What can I do for you?"
+        },
+        {
+            "input": "i want to book a hotel",
+            "output": "I'd be happy to help you book a hotel. Please provide the check-in date (YYYY-MM-DD), check-out date (YYYY-MM-DD), city, and number of people."
+        },
+        {
+            "input": "can you help me book a room",
+            "output": "Of course! To make a booking, I'll need: check-in date (YYYY-MM-DD), check-out date (YYYY-MM-DD), city, and number of guests."
+        },
+        {
+            "input": "what is the check-in time",
+            "output": "Check-in time is 3:00 PM. You can arrive anytime after that."
+        },
+        {
+            "input": "when can i check in",
+            "output": "Our standard check-in time is 3:00 PM. Early check-in may be available upon request."
+        },
+        {
+            "input": "what is the check-out time",
+            "output": "Check-out time is 11:00 AM. Late check-out may be available for an additional fee."
+        },
+        {
+            "input": "when do i need to check out",
+            "output": "The standard check-out time is 11:00 AM. Would you like to request a late check-out?"
+        },
+        {
+            "input": "what is your cancellation policy",
+            "output": "We offer free cancellation up to 24 hours before check-in. After that, a one-night charge may apply."
+        },
+        {
+            "input": "can i cancel my booking",
+            "output": "Yes, you can cancel your booking free of charge up to 24 hours before check-in. Please provide your booking ID to proceed with cancellation."
+        },
+        {
+            "input": "what payment methods do you accept",
+            "output": "We accept credit cards, debit cards, and PayPal for payment."
+        },
+        {
+            "input": "how can i pay for my booking",
+            "output": "You can pay using credit cards, debit cards, or PayPal. All major credit cards are accepted."
+        },
+        {
+            "input": "what amenities do you offer",
+            "output": "Our hotel offers free WiFi, swimming pool, gym, and breakfast. We also have a restaurant, spa, and business center."
+        },
+        {
+            "input": "do you have a pool",
+            "output": "Yes, we have a swimming pool available for all guests. It's open from 7 AM to 10 PM."
+        },
+        {
+            "input": "is breakfast included",
+            "output": "Yes, breakfast is included in your stay. We serve a continental breakfast from 6:30 AM to 10:00 AM."
+        },
+        {
+            "input": "i want to book a hotel in london",
+            "output": "I can help you book a hotel in London. Please provide your check-in date (YYYY-MM-DD), check-out date (YYYY-MM-DD), and number of people."
+        },
+        {
+            "input": "book a room in paris",
+            "output": "I'll help you book a room in Paris. Could you please provide: check-in date (YYYY-MM-DD), check-out date (YYYY-MM-DD), and number of guests?"
+        },
+        {
+            "input": "what are the popular attractions in london",
+            "output": "Popular attractions in London include Big Ben, London Eye, Buckingham Palace, and the British Museum."
+        },
+        {
+            "input": "suggest places to visit in paris",
+            "output": "Must-visit places in Paris include the Eiffel Tower, Louvre Museum, Notre-Dame Cathedral, and the Champs-Élysées."
+        },
+        {
+            "input": "i need to modify my booking",
+            "output": "I can help you modify your booking. Please provide your booking ID and the details you'd like to change."
+        },
+        {
+            "input": "can i change my reservation",
+            "output": "Yes, you can modify your reservation. Please share your booking ID and what changes you'd like to make."
+        },
+        {
+            "input": "do you have free wifi",
+            "output": "Yes, we provide complimentary high-speed WiFi throughout the hotel for all guests."
+        },
+        {
+            "input": "is there a gym in the hotel",
+            "output": "Yes, we have a fully equipped fitness center that's open 24/7 for all hotel guests."
+        },
+        {
+            "input": "what time is breakfast served",
+            "output": "Breakfast is served daily from 6:30 AM to 10:00 AM in our main restaurant."
+        },
+        {
+            "input": "do you have room service",
+            "output": "Yes, we offer 24-hour room service. You can order from our in-room dining menu."
+        },
+        {
+            "input": "is parking available",
+            "output": "Yes, we have on-site parking available for guests. There is a daily parking fee of $20."
+        },
+        {
+            "input": "do you have a business center",
+            "output": "Yes, we have a business center with computers, printers, and meeting rooms available for guests."
+        },
+        {
+            "input": "what is your pet policy",
+            "output": "We are pet-friendly! Pets are welcome with a $50 cleaning fee per stay. Please inform us in advance if you're bringing a pet."
+        },
+        {
+            "input": "do you have accessible rooms",
+            "output": "Yes, we have accessible rooms available. Please let us know your specific requirements when booking."
+        },
+        {
+            "input": "what is the minimum age to book",
+            "output": "The minimum age to book a room is 18 years old. A valid ID is required at check-in."
+        },
+        {
+            "input": "do you have any special offers",
+            "output": "Yes, we have several special offers! We offer early bird discounts for bookings made 30 days in advance, weekend packages, and seasonal promotions. Would you like to know more about any specific offer?"
+        },
+        {
+            "input": "what are your room types",
+            "output": "We offer several room types: Standard, Deluxe, Suite, and Executive rooms. Each type has different amenities and price points. Would you like to know more about a specific room type?"
+        },
+        {
+            "input": "tell me about your suites",
+            "output": "Our suites are spacious rooms with separate living areas. They include a king-size bed, luxury bathroom, mini-bar, and premium amenities. Would you like to know the rates for our suites?"
+        },
+        {
+            "input": "do you have connecting rooms",
+            "output": "Yes, we offer connecting rooms for families or groups. These are two rooms with an internal door. Please mention this requirement when making your booking."
+        },
+        {
+            "input": "what's included in the room rate",
+            "output": "Our room rates include the room accommodation, daily breakfast, access to the fitness center, pool, and WiFi. Additional services like spa treatments, room service, and parking may have extra charges."
+        },
+        {
+            "input": "do you have a restaurant",
+            "output": "Yes, we have an on-site restaurant serving international cuisine. We serve breakfast, lunch, and dinner. Room service is also available 24/7."
+        },
+        {
+            "input": "what are your check-in requirements",
+            "output": "For check-in, you'll need a valid government-issued ID, the credit card used for booking, and any special requests you've made. The minimum check-in age is 18."
+        },
+        {
+            "input": "can i get a late check-out",
+            "output": "Late check-out is available upon request and subject to availability. It's typically until 2 PM and may incur an additional fee. Would you like to request a late check-out?"
+        },
+        {
+            "input": "do you have airport shuttle service",
+            "output": "Yes, we provide airport shuttle service. Please provide your flight details when booking, and we'll arrange the pickup. The service is available 24/7."
+        },
+        {
+            "input": "what's your smoking policy",
+            "output": "We are a non-smoking hotel. Smoking is not permitted in any rooms or indoor areas. Designated smoking areas are available outside the hotel."
+        },
+        {
+            "input": "do you have a spa",
+            "output": "Yes, we have a full-service spa offering massages, facials, and other treatments. Advance booking is recommended. Would you like to know about our spa packages?"
+        },
+        {
+            "input": "what's your policy on children",
+            "output": "Children under 12 stay free when sharing a room with parents. We offer child-friendly amenities and activities. Would you like to know more about our family services?"
+        },
+        {
+            "input": "do you have a kids club",
+            "output": "Yes, we have a supervised kids club for children aged 4-12. It's open daily from 9 AM to 6 PM and offers various activities and games."
+        },
+        {
+            "input": "what's your policy on extra beds",
+            "output": "We can provide extra beds or cribs upon request. Extra beds are subject to availability and may incur an additional charge. Please mention this when booking."
+        },
+        {
+            "input": "do you have a conference room",
+            "output": "Yes, we have several conference rooms and meeting spaces available for business events. They can accommodate groups of various sizes and include audio-visual equipment."
+        },
+        {
+            "input": "what's your policy on group bookings",
+            "output": "We welcome group bookings! For groups of 10 or more rooms, we offer special rates and dedicated group services. Please contact our group booking department for more information."
+        },
+        {
+            "input": "do you have a loyalty program",
+            "output": "Yes, we have a loyalty program that offers points for stays, room upgrades, and exclusive member rates. Would you like to know more about joining our loyalty program?"
+        },
+        {
+            "input": "what's your policy on service animals",
+            "output": "Service animals are welcome at our hotel at no additional charge. Please inform us in advance if you'll be bringing a service animal."
+        },
+        {
+            "input": "do you have a gift shop",
+            "output": "Yes, we have a gift shop in the lobby that sells souvenirs, snacks, and travel essentials. It's open daily from 7 AM to 10 PM."
+        },
+        {
+            "input": "what's your policy on lost and found",
+            "output": "We maintain a lost and found service. If you've lost an item, please contact our front desk with a description. We keep items for 30 days before donating them to charity."
+        },
+        {
+            "input": "do you have a laundry service",
+            "output": "Yes, we offer laundry and dry cleaning services. Same-day service is available for items received before 9 AM. Would you like to know our laundry rates?"
+        },
+        {
+            "input": "what's your policy on early check-in",
+            "output": "Early check-in is subject to availability. You can request it during booking, and we'll do our best to accommodate your request. There may be an additional charge for guaranteed early check-in."
+        },
+        {
+            "input": "do you have a swimming pool",
+            "output": "Yes, we have both an indoor and outdoor swimming pool. The indoor pool is open 24/7, and the outdoor pool is open from 7 AM to 10 PM during summer months."
+        },
+        {
+            "input": "what's your policy on room upgrades",
+            "output": "Room upgrades are subject to availability and may be available for an additional charge. You can request an upgrade during check-in or through our loyalty program."
+        },
+        {
+            "input": "do you have a bar",
+            "output": "Yes, we have a bar in the lobby and a rooftop bar. They serve a variety of drinks and light snacks. The lobby bar is open 24/7, and the rooftop bar is open from 4 PM to midnight."
+        },
+        {
+            "input": "what's your policy on special requests",
+            "output": "We try to accommodate all special requests. Please mention any special requirements during booking, and we'll do our best to fulfill them. This includes dietary restrictions, room preferences, or accessibility needs."
+        },
+        {
+            "input": "do you have a fitness center",
+            "output": "Yes, we have a fully equipped fitness center that's open 24/7. It includes cardio machines, weight training equipment, and a yoga studio."
+        },
+        {
+            "input": "what's your policy on room service",
+            "output": "We offer 24-hour room service. You can order from our in-room dining menu. There's a service charge for room service orders, and delivery typically takes 30-45 minutes."
+        },
+        {
+            "input": "do you have a business center",
+            "output": "Yes, we have a business center with computers, printers, and meeting rooms. It's open 24/7 and is free for all hotel guests."
+        },
+        {
+            "input": "what do i need to bring for check-in",
+            "output": "Please bring a valid government-issued ID, the credit card used for booking, and any special requests you've made. The minimum check-in age is 18."
+        },
+        {
+            "input": "what documents do i need for check-in",
+            "output": "You'll need a valid government-issued ID and the credit card used for booking. The minimum check-in age is 18."
+        },
+        {
+            "input": "i want to book a hotel in new york",
+            "output": "I can help you book a hotel in New York. Please provide your check-in date (YYYY-MM-DD), check-out date (YYYY-MM-DD), and number of people."
+        },
+        {
+            "input": "book a room in tokyo",
+            "output": "I'll help you book a room in Tokyo. Could you please provide: check-in date (YYYY-MM-DD), check-out date (YYYY-MM-DD), and number of guests?"
+        },
+        {
+            "input": "i need a hotel in sydney",
+            "output": "I can help you book a hotel in Sydney. Please provide your check-in date (YYYY-MM-DD), check-out date (YYYY-MM-DD), and number of people."
+        },
+        {
+            "input": "reserve a room in paris",
+            "output": "I'll help you reserve a room in Paris. Please provide: check-in date (YYYY-MM-DD), check-out date (YYYY-MM-DD), and number of guests."
+        },
+        {
+            "input": "i want to book for 2 people in london",
+            "output": "I can help you book a room for 2 people in London. Please provide your check-in date (YYYY-MM-DD) and check-out date (YYYY-MM-DD)."
+        },
+        {
+            "input": "book a room for 4 people in tokyo",
+            "output": "I'll help you book a room for 4 people in Tokyo. Please provide your check-in date (YYYY-MM-DD) and check-out date (YYYY-MM-DD)."
+        },
+        {
+            "input": "i need to cancel my booking",
+            "output": "I can help you cancel your booking. Please provide your booking ID to proceed with the cancellation."
+        },
+        {
+            "input": "how do i cancel my reservation",
+            "output": "To cancel your reservation, please provide your booking ID. I'll help you process the cancellation."
+        },
+        {
+            "input": "i want to modify my booking",
+            "output": "I can help you modify your booking. Please provide your booking ID and the details you'd like to change."
+        },
+        {
+            "input": "change my reservation dates",
+            "output": "I can help you change your reservation dates. Please provide your booking ID and the new dates you'd like to book."
+        },
+        {
+            "input": "update my booking details",
+            "output": "I can help you update your booking details. Please provide your booking ID and the information you'd like to modify."
+        },
+        {
+            "input": "what are the popular places in tokyo",
+            "output": "Popular attractions in Tokyo include Tokyo Skytree, Senso-ji Temple, Tokyo Disneyland, and the Tsukiji Outer Market."
+        },
+        {
+            "input": "suggest places to visit in sydney",
+            "output": "Must-visit places in Sydney include the Sydney Opera House, Bondi Beach, Sydney Harbour Bridge, and the Royal Botanic Garden."
+        },
+        {
+            "input": "what should i see in new york",
+            "output": "Popular attractions in New York include the Statue of Liberty, Central Park, Times Square, and the Empire State Building."
+        },
+        {
+            "input": "tell me about tourist spots in paris",
+            "output": "Must-visit places in Paris include the Eiffel Tower, Louvre Museum, Notre-Dame Cathedral, and the Champs-Élysées."
+        },
+        {
+            "input": "what's the check-in time",
+            "output": "Check-in time is 3:00 PM. You can arrive anytime after that."
+        },
+        {
+            "input": "when can i check in",
+            "output": "Our standard check-in time is 3:00 PM. Early check-in may be available upon request."
+        },
+        {
+            "input": "what time is check-in",
+            "output": "Check-in time is 3:00 PM. Early check-in may be available upon request."
+        },
+        {
+            "input": "what's the check-out time",
+            "output": "Check-out time is 11:00 AM. Late check-out may be available for an additional fee."
+        },
+        {
+            "input": "when do i need to check out",
+            "output": "The standard check-out time is 11:00 AM. Would you like to request a late check-out?"
+        },
+        {
+            "input": "what time is check-out",
+            "output": "Check-out time is 11:00 AM. Late check-out may be available for an additional fee."
+        },
+        {
+            "input": "what is your cancellation policy",
+            "output": "We offer free cancellation up to 24 hours before check-in. After that, a one-night charge may apply."
+        },
+        {
+            "input": "can i cancel my booking",
+            "output": "Yes, you can cancel your booking free of charge up to 24 hours before check-in. Please provide your booking ID to proceed with cancellation."
+        },
+        {
+            "input": "how do i cancel my reservation",
+            "output": "You can cancel your reservation by providing your booking ID. Free cancellation is available up to 24 hours before check-in."
+        },
+        {
+            "input": "what payment methods do you accept",
+            "output": "We accept credit cards, debit cards, and PayPal for payment."
+        },
+        {
+            "input": "what cards do you accept",
+            "output": "We accept all major credit cards, debit cards, and PayPal for payment."
+        },
+        {
+            "input": "what amenities do you offer",
+            "output": "Our hotel offers free WiFi, swimming pool, gym, and breakfast. We also have a restaurant, spa, and business center."
+        },
+        {
+            "input": "what facilities do you have",
+            "output": "We have a swimming pool, gym, spa, restaurant, business center, and offer free WiFi and breakfast."
+        },
+        {
+            "input": "is there a swimming pool",
+            "output": "Yes, we have a swimming pool that's open from 7 AM to 10 PM for all hotel guests."
+        },
+        {
+            "input": "do you serve breakfast",
+            "output": "Yes, we serve a continental breakfast from 6:30 AM to 10:00 AM, which is included in your stay."
+        },
+        {
+            "input": "is room service available",
+            "output": "Yes, we provide 24-hour room service. You can order from our in-room dining menu at any time."
+        },
+        {
+            "input": "do you have parking",
+            "output": "Yes, we offer on-site parking for $20 per day. Would you like to reserve a parking spot?"
+        },
+        {
+            "input": "is there a business center",
+            "output": "Yes, our business center is open 24/7 and includes computers, printers, and meeting rooms."
+        },
+        {
+            "input": "can i bring my pet",
+            "output": "Yes, pets are welcome! There's a $50 cleaning fee per stay. Please let us know in advance if you're bringing a pet."
+        },
+        {
+            "input": "are there wheelchair accessible rooms",
+            "output": "Yes, we offer wheelchair accessible rooms. Please mention this requirement when making your booking."
+        },
+        {
+            "input": "how old do you need to be to book",
+            "output": "You must be at least 18 years old to book a room. A valid ID will be required at check-in."
+        },
+        {
+            "input": "are there any deals available",
+            "output": "Yes, we have various deals including early bird discounts, weekend packages, and seasonal promotions. Would you like to know more about our current offers?"
+        },
+        {
+            "input": "what kinds of rooms do you have",
+            "output": "We have Standard, Deluxe, Suite, and Executive rooms. Each type offers different amenities and price points. Would you like details about any specific room type?"
+        },
+        {
+            "input": "what are suites like",
+            "output": "Our suites feature separate living areas, king-size beds, luxury bathrooms, mini-bars, and premium amenities. Would you like to know more about our suite options?"
+        },
+        {
+            "input": "can i get rooms next to each other",
+            "output": "Yes, we can arrange connecting rooms or adjacent rooms. Please mention this requirement when making your booking."
+        },
+        {
+            "input": "what does the room price include",
+            "output": "The room price includes your accommodation, daily breakfast, fitness center access, pool access, and WiFi. Additional services may have separate charges."
+        },
+        {
+            "input": "is there a restaurant in the hotel",
+            "output": "Yes, our hotel restaurant serves international cuisine for breakfast, lunch, and dinner. We also offer 24/7 room service."
+        },
+        {
+            "input": "what do i need for check-in",
+            "output": "You'll need a valid government-issued ID and the credit card used for booking. The minimum check-in age is 18."
+        },
+        {
+            "input": "is late check-out possible",
+            "output": "Yes, late check-out is available upon request. It's typically until 2 PM and may have an additional charge. Would you like to request it?"
+        },
+        {
+            "input": "is there a shuttle to the airport",
+            "output": "Yes, we offer 24/7 airport shuttle service. Please provide your flight details when booking to arrange the pickup."
+        },
+        {
+            "input": "can i smoke in the hotel",
+            "output": "No, we are a non-smoking hotel. Smoking is only allowed in designated areas outside the hotel."
+        },
+        {
+            "input": "is there a spa in the hotel",
+            "output": "Yes, our hotel features a full-service spa with massages, facials, and other treatments. Would you like information about our spa services?"
+        },
+        {
+            "input": "do you charge for children",
+            "output": "Children under 12 stay free when sharing a room with parents. We have special amenities and activities for children."
+        },
+        {
+            "input": "is there a children's club",
+            "output": "Yes, our kids club is open daily from 9 AM to 6 PM for children aged 4-12. It offers supervised activities and games."
+        },
+        {
+            "input": "I want to book a hotel in London for next week",
+            "output": "I'll help you book a hotel in London. Could you please provide the exact check-in and check-out dates (YYYY-MM-DD) and number of people?"
+        },
+        {
+            "input": "Can I change my booking dates?",
+            "output": "I can help you modify your booking. Please provide your booking ID and the new dates you'd like to change to."
+        },
+        {
+            "input": "What are some good places to visit in Delhi?",
+            "output": "Here are some popular attractions in Delhi: Red Fort, India Gate, Qutub Minar, Lotus Temple, Humayun's Tomb, Chandni Chowk, and Akshardham Temple."
+        },
+        {
+            "input": "I need a hotel room with a view",
+            "output": "We offer various room types with different views. Would you like a city view, garden view, or ocean view? Please let me know your preference when booking."
+        },
+        {
+            "input": "Do you have rooms with a balcony?",
+            "output": "Yes, we have rooms with private balconies. They are available in our Deluxe and Suite categories. Would you like to know more about these room types?"
+        },
+        {
+            "input": "What's the difference between your room types?",
+            "output": "We offer several room categories: Standard (basic amenities), Deluxe (larger rooms with better views), Suite (separate living area), and Executive (premium amenities and services). Each type has different features and price points."
+        },
+        {
+            "input": "Can I get a room upgrade?",
+            "output": "Room upgrades are subject to availability and may be available for an additional charge. You can request an upgrade during check-in or through our loyalty program. Would you like to know more about our upgrade options?"
+        },
+        {
+            "input": "What's included in the room rate?",
+            "output": "Our room rates include accommodation, daily breakfast, access to the fitness center, pool, and WiFi. Additional services like spa treatments, room service, and parking may have extra charges."
+        },
+        {
+            "input": "Do you have family rooms?",
+            "output": "Yes, we offer family rooms and connecting rooms. Family rooms can accommodate up to 4 people, and connecting rooms are perfect for larger families. Would you like to know more about our family accommodation options?"
+        },
+        {
+            "input": "What's your policy on children?",
+            "output": "Children under 12 stay free when sharing a room with parents. We offer child-friendly amenities and activities. Would you like to know more about our family services?"
+        },
+        {
+            "input": "Do you have a kids club?",
+            "output": "Yes, we have a supervised kids club for children aged 4-12. It's open daily from 9 AM to 6 PM and offers various activities and games."
+        },
+        {
+            "input": "What's your policy on extra beds?",
+            "output": "We can provide extra beds or cribs upon request. Extra beds are subject to availability and may incur an additional charge. Please mention this when booking."
+        },
+        {
+            "input": "Do you have a conference room?",
+            "output": "Yes, we have several conference rooms and meeting spaces available for business events. They can accommodate groups of various sizes and include audio-visual equipment."
+        },
+        {
+            "input": "What's your policy on group bookings?",
+            "output": "We welcome group bookings! For groups of 10 or more rooms, we offer special rates and dedicated group services. Please contact our group booking department for more information."
+        },
+        {
+            "input": "Do you have a loyalty program?",
+            "output": "Yes, we have a loyalty program that offers points for stays, room upgrades, and exclusive member rates. Would you like to know more about joining our loyalty program?"
+        },
+        {
+            "input": "What's your policy on service animals?",
+            "output": "Service animals are welcome at our hotel at no additional charge. Please inform us in advance if you'll be bringing a service animal."
+        },
+        {
+            "input": "Do you have a gift shop?",
+            "output": "Yes, we have a gift shop in the lobby that sells souvenirs, snacks, and travel essentials. It's open daily from 7 AM to 10 PM."
+        },
+        {
+            "input": "What's your policy on lost and found?",
+            "output": "We maintain a lost and found service. If you've lost an item, please contact our front desk with a description. We keep items for 30 days before donating them to charity."
+        },
+        {
+            "input": "Do you have a laundry service?",
+            "output": "Yes, we offer laundry and dry cleaning services. Same-day service is available for items received before 9 AM. Would you like to know our laundry rates?"
+        },
+        {
+            "input": "What's your policy on early check-in?",
+            "output": "Early check-in is subject to availability. You can request it during booking, and we'll do our best to accommodate your request. There may be an additional charge for guaranteed early check-in."
+        },
+        {
+            "input": "Do you have a swimming pool?",
+            "output": "Yes, we have both an indoor and outdoor swimming pool. The indoor pool is open 24/7, and the outdoor pool is open from 7 AM to 10 PM during summer months."
+        },
+        {
+            "input": "What's your policy on room upgrades?",
+            "output": "Room upgrades are subject to availability and may be available for an additional charge. You can request an upgrade during check-in or through our loyalty program."
+        },
+        {
+            "input": "Do you have a bar?",
+            "output": "Yes, we have a bar in the lobby and a rooftop bar. They serve a variety of drinks and light snacks. The lobby bar is open 24/7, and the rooftop bar is open from 4 PM to midnight."
+        },
+        {
+            "input": "What's your policy on special requests?",
+            "output": "We try to accommodate all special requests. Please mention any special requirements during booking, and we'll do our best to fulfill them. This includes dietary restrictions, room preferences, or accessibility needs."
+        },
+        {
+            "input": "Do you have a fitness center?",
+            "output": "Yes, we have a fully equipped fitness center that's open 24/7. It includes cardio machines, weight training equipment, and a yoga studio."
+        },
+        {
+            "input": "What's your policy on room service?",
+            "output": "We offer 24-hour room service. You can order from our in-room dining menu. There's a service charge for room service orders, and delivery typically takes 30-45 minutes."
+        },
+        {
+            "input": "Do you have a business center?",
+            "output": "Yes, we have a business center with computers, printers, and meeting rooms. It's open 24/7 and is free for all hotel guests."
+        },
+        {
+            "input": "What do I need to bring for check-in?",
+            "output": "Please bring a valid government-issued ID, the credit card used for booking, and any special requests you've made. The minimum check-in age is 18."
+        },
+        {
+            "input": "What documents do I need for check-in?",
+            "output": "You'll need a valid government-issued ID and the credit card used for booking. The minimum check-in age is 18."
+        },
+        {
+            "input": "I want to book a hotel in New York",
+            "output": "I can help you book a hotel in New York. Please provide your check-in date (YYYY-MM-DD), check-out date (YYYY-MM-DD), and number of people."
+        },
+        {
+            "input": "Book a room in Tokyo",
+            "output": "I'll help you book a room in Tokyo. Could you please provide: check-in date (YYYY-MM-DD), check-out date (YYYY-MM-DD), and number of guests?"
+        },
+        {
+            "input": "I need a hotel in Sydney",
+            "output": "I can help you book a hotel in Sydney. Please provide your check-in date (YYYY-MM-DD), check-out date (YYYY-MM-DD), and number of people."
+        },
+        {
+            "input": "Reserve a room in Paris",
+            "output": "I'll help you reserve a room in Paris. Please provide: check-in date (YYYY-MM-DD), check-out date (YYYY-MM-DD), and number of guests."
+        },
+        {
+            "input": "I want to book for 2 people in London",
+            "output": "I can help you book a room for 2 people in London. Please provide your check-in date (YYYY-MM-DD) and check-out date (YYYY-MM-DD)."
+        },
+        {
+            "input": "Book a room for 4 people in Tokyo",
+            "output": "I'll help you book a room for 4 people in Tokyo. Please provide your check-in date (YYYY-MM-DD) and check-out date (YYYY-MM-DD)."
+        },
+        {
+            "input": "I need to cancel my booking",
+            "output": "I can help you cancel your booking. Please provide your booking ID to proceed with the cancellation."
+        },
+        {
+            "input": "How do I cancel my reservation",
+            "output": "To cancel your reservation, please provide your booking ID. I'll help you process the cancellation."
+        },
+        {
+            "input": "I want to modify my booking",
+            "output": "I can help you modify your booking. Please provide your booking ID and the details you'd like to change."
+        },
+        {
+            "input": "Change my reservation dates",
+            "output": "I can help you change your reservation dates. Please provide your booking ID and the new dates you'd like to book."
+        },
+        {
+            "input": "Update my booking details",
+            "output": "I can help you update your booking details. Please provide your booking ID and the information you'd like to modify."
+        },
+        {
+            "input": "What are the popular places in Tokyo",
+            "output": "Popular attractions in Tokyo include Tokyo Skytree, Senso-ji Temple, Tokyo Disneyland, and the Tsukiji Outer Market."
+        },
+        {
+            "input": "Suggest places to visit in Sydney",
+            "output": "Must-visit places in Sydney include the Sydney Opera House, Bondi Beach, Sydney Harbour Bridge, and the Royal Botanic Garden."
+        },
+        {
+            "input": "What should I see in New York",
+            "output": "Popular attractions in New York include the Statue of Liberty, Central Park, Times Square, and the Empire State Building."
+        },
+        {
+            "input": "Tell me about tourist spots in Paris",
+            "output": "Must-visit places in Paris include the Eiffel Tower, Louvre Museum, Notre-Dame Cathedral, and the Champs-Élysées."
+        },
+        {
+            "input": "What's the check-in time",
+            "output": "Check-in time is 3:00 PM. You can arrive anytime after that."
+        },
+        {
+            "input": "When can I check in",
+            "output": "Our standard check-in time is 3:00 PM. Early check-in may be available upon request."
+        },
+        {
+            "input": "What time is check-in",
+            "output": "Check-in time is 3:00 PM. Early check-in may be available upon request."
+        },
+        {
+            "input": "What's the check-out time",
+            "output": "Check-out time is 11:00 AM. Late check-out may be available for an additional fee."
+        },
+        {
+            "input": "When do I need to check out",
+            "output": "The standard check-out time is 11:00 AM. Would you like to request a late check-out?"
+        },
+        {
+            "input": "What time is check-out",
+            "output": "Check-out time is 11:00 AM. Late check-out may be available for an additional fee."
+        },
+        {
+            "input": "What is your cancellation policy",
+            "output": "We offer free cancellation up to 24 hours before check-in. After that, a one-night charge may apply."
+        },
+        {
+            "input": "Can I cancel my booking",
+            "output": "Yes, you can cancel your booking free of charge up to 24 hours before check-in. Please provide your booking ID to proceed with cancellation."
+        },
+        {
+            "input": "How do I cancel my reservation",
+            "output": "You can cancel your reservation by providing your booking ID. Free cancellation is available up to 24 hours before check-in."
+        },
+        {
+            "input": "What payment methods do you accept",
+            "output": "We accept credit cards, debit cards, and PayPal for payment."
+        },
+        {
+            "input": "What cards do you accept",
+            "output": "We accept all major credit cards, debit cards, and PayPal for payment."
+        },
+        {
+            "input": "What amenities do you offer",
+            "output": "Our hotel offers free WiFi, swimming pool, gym, and breakfast. We also have a restaurant, spa, and business center."
+        },
+        {
+            "input": "What facilities do you have",
+            "output": "We have a swimming pool, gym, spa, restaurant, business center, and offer free WiFi and breakfast."
+        },
+        {
+            "input": "Is there a swimming pool",
+            "output": "Yes, we have a swimming pool that's open from 7 AM to 10 PM for all hotel guests."
+        },
+        {
+            "input": "Do you serve breakfast",
+            "output": "Yes, we serve a continental breakfast from 6:30 AM to 10:00 AM, which is included in your stay."
+        },
+        {
+            "input": "Is room service available",
+            "output": "Yes, we provide 24-hour room service. You can order from our in-room dining menu at any time."
+        },
+        {
+            "input": "Do you have parking",
+            "output": "Yes, we offer on-site parking for $20 per day. Would you like to reserve a parking spot?"
+        },
+        {
+            "input": "Is there a business center",
+            "output": "Yes, our business center is open 24/7 and includes computers, printers, and meeting rooms."
+        },
+        {
+            "input": "Can I bring my pet",
+            "output": "Yes, pets are welcome! There's a $50 cleaning fee per stay. Please let us know in advance if you're bringing a pet."
+        },
+        {
+            "input": "Are there wheelchair accessible rooms",
+            "output": "Yes, we offer wheelchair accessible rooms. Please mention this requirement when making your booking."
+        },
+        {
+            "input": "How old do you need to be to book",
+            "output": "You must be at least 18 years old to book a room. A valid ID will be required at check-in."
+        },
+        {
+            "input": "Are there any deals available",
+            "output": "Yes, we have various deals including early bird discounts, weekend packages, and seasonal promotions. Would you like to know more about our current offers?"
+        },
+        {
+            "input": "What kinds of rooms do you have",
+            "output": "We have Standard, Deluxe, Suite, and Executive rooms. Each type offers different amenities and price points. Would you like details about any specific room type?"
+        },
+        {
+            "input": "What are suites like",
+            "output": "Our suites feature separate living areas, king-size beds, luxury bathrooms, mini-bars, and premium amenities. Would you like to know more about our suite options?"
+        },
+        {
+            "input": "Can I get rooms next to each other",
+            "output": "Yes, we can arrange connecting rooms or adjacent rooms. Please mention this requirement when making your booking."
+        },
+        {
+            "input": "What does the room price include",
+            "output": "The room price includes your accommodation, daily breakfast, fitness center access, pool access, and WiFi. Additional services may have separate charges."
+        },
+        {
+            "input": "Is there a restaurant in the hotel",
+            "output": "Yes, our hotel restaurant serves international cuisine for breakfast, lunch, and dinner. We also offer 24/7 room service."
+        },
+        {
+            "input": "What do I need for check-in",
+            "output": "You'll need a valid government-issued ID and the credit card used for booking. The minimum check-in age is 18."
+        },
+        {
+            "input": "Is late check-out possible",
+            "output": "Yes, late check-out is available upon request. It's typically until 2 PM and may have an additional charge. Would you like to request it?"
+        },
+        {
+            "input": "Is there a shuttle to the airport",
+            "output": "Yes, we offer 24/7 airport shuttle service. Please provide your flight details when booking to arrange the pickup."
+        },
+        {
+            "input": "Can I smoke in the hotel",
+            "output": "No, we are a non-smoking hotel. Smoking is only allowed in designated areas outside the hotel."
+        },
+        {
+            "input": "Is there a spa in the hotel",
+            "output": "Yes, our hotel features a full-service spa with massages, facials, and other treatments. Would you like information about our spa services?"
+        },
+        {
+            "input": "Do you charge for children",
+            "output": "Children under 12 stay free when sharing a room with parents. We have special amenities and activities for children."
+        },
+        {
+            "input": "Is there a children's club",
+            "output": "Yes, our kids club is open daily from 9 AM to 6 PM for children aged 4-12. It offers supervised activities and games."
+        },
+        {
+            "input": "I want to book a hotel in London for next week",
+            "output": "I'll help you book a hotel in London. Could you please provide the exact check-in and check-out dates (YYYY-MM-DD) and number of people?"
+        },
+        {
+            "input": "Can I change my booking dates?",
+            "output": "I can help you modify your booking. Please provide your booking ID and the new dates you'd like to change to."
+        },
+        {
+            "input": "What are some good places to visit in Delhi?",
+            "output": "Here are some popular attractions in Delhi: Red Fort, India Gate, Qutub Minar, Lotus Temple, Humayun's Tomb, Chandni Chowk, and Akshardham Temple."
+        },
+        {
+            "input": "I want to book a honeymoon suite in Paris for next month",
+            "output": "I'd be happy to help you book a honeymoon suite in Paris. Please provide your check-in date (YYYY-MM-DD), check-out date (YYYY-MM-DD), and any special requests for your honeymoon stay. We can arrange for champagne, flowers, or other romantic amenities."
+        },
+        {
+            "input": "Can you arrange a surprise birthday celebration in the room?",
+            "output": "Yes, we can arrange a birthday celebration! We offer packages that include decorations, a birthday cake, champagne, and special room amenities. Please provide your booking ID and the date of the celebration."
+        },
+        {
+            "input": "I need a room with a kitchenette for a long stay",
+            "output": "We have extended stay rooms with kitchenettes available. These rooms include a small kitchen with basic appliances, cookware, and utensils. Please provide your check-in date (YYYY-MM-DD), check-out date (YYYY-MM-DD), and the number of people."
+        },
+        {
+            "input": "Do you have rooms suitable for business travelers?",
+            "output": "Yes, we have executive rooms designed for business travelers. They include a work desk, high-speed WiFi, business center access, and complimentary breakfast. Would you like to know more about our business amenities?"
+        },
+        {
+            "input": "Can you arrange airport pickup for my late night arrival?",
+            "output": "Yes, we can arrange airport pickup for your late night arrival. Please provide your flight details (flight number, arrival time, and airport terminal) when booking. Our 24/7 shuttle service will ensure you reach the hotel safely."
+        },
+        {
+            "input": "I have dietary restrictions. Can you accommodate special meal requests?",
+            "output": "Yes, we can accommodate various dietary restrictions including vegetarian, vegan, gluten-free, and other special requirements. Please inform us of your dietary needs during booking, and our restaurant will prepare meals accordingly."
+        },
+        {
+            "input": "Do you offer wedding packages?",
+            "output": "Yes, we offer comprehensive wedding packages that include venue rental, catering, decoration, and accommodation for guests. Would you like to know more about our wedding services and available dates?"
+        },
+        {
+            "input": "Can you arrange a city tour for hotel guests?",
+            "output": "Yes, we offer guided city tours for our guests. Tours can be arranged through our concierge desk, and we offer various options including walking tours, bus tours, and private guided tours. Would you like to know more about our tour packages?"
+        },
+        {
+            "input": "I need a room with a bathtub",
+            "output": "Yes, we have rooms with bathtubs available in our Deluxe and Suite categories. Please mention this preference when booking, and we'll ensure you get a room with a bathtub."
+        },
+        {
+            "input": "Do you have rooms with ocean view?",
+            "output": "Yes, we have rooms with ocean views available. These rooms are in our Deluxe and Suite categories and offer beautiful views of the ocean. Would you like to know the rates for ocean view rooms?"
+        },
+        {
+            "input": "Can you arrange a romantic dinner in the room?",
+            "output": "Yes, we can arrange a romantic in-room dining experience. This includes a special menu, candlelight setup, and champagne. Please provide your booking ID and preferred date for the dinner."
+        },
+        {
+            "input": "Do you have rooms with a private terrace?",
+            "output": "Yes, our Suite and Executive rooms feature private terraces. These rooms offer outdoor seating and beautiful views. Would you like to know more about these room types?"
+        },
+        {
+            "input": "Can you arrange a meeting room for a business conference?",
+            "output": "Yes, we have several meeting rooms and conference facilities available. They can accommodate various group sizes and include audio-visual equipment, catering services, and high-speed WiFi. Please provide the date, number of attendees, and duration of your conference."
+        },
+        {
+            "input": "Do you offer cooking classes for guests?",
+            "output": "Yes, we offer cooking classes with our executive chef. Classes are available for individuals and groups, and can be customized to your preferences. Would you like to know the schedule and pricing for our cooking classes?"
+        },
+        {
+            "input": "Can you arrange a private yoga session?",
+            "output": "Yes, we offer private yoga sessions with our certified instructors. Sessions can be arranged in your room, on the terrace, or in our dedicated yoga studio. Please provide your preferred time and any specific requirements."
+        },
+        {
+            "input": "Do you have rooms with a fireplace?",
+            "output": "Yes, our Executive Suites feature working fireplaces. These rooms are perfect for a cozy stay during colder months. Would you like to know more about these special rooms?"
+        },
+        {
+            "input": "Can you arrange a wine tasting experience?",
+            "output": "Yes, we offer wine tasting experiences in our wine cellar. Our sommelier can arrange private tastings or group sessions. Would you like to know more about our wine tasting packages?"
+        },
+        {
+            "input": "Do you have rooms with a private pool?",
+            "output": "Yes, our Presidential Suite features a private plunge pool. This exclusive suite also includes a private terrace and premium amenities. Would you like to know more about this special accommodation?"
+        },
+        {
+            "input": "Can you arrange a private chef for in-room dining?",
+            "output": "Yes, we can arrange a private chef for a special dining experience in your room. The chef can prepare a customized menu based on your preferences. Please provide your booking ID and preferred date for this service."
+        },
+        {
+            "input": "Do you offer photography services for special occasions?",
+            "output": "Yes, we have professional photographers available for special occasions like anniversaries, proposals, or family gatherings. Would you like to know more about our photography packages?"
+        }
+    ]
+} 
