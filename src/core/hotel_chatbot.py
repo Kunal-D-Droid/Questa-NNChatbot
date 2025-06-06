@@ -396,7 +396,7 @@ Updated booking details:
         word_counts = {}
         for word in words:
             word_counts[word] = word_counts.get(word, 0) + 1
-            if word_counts[word] > 3:  # Word appears more than 3 times
+            if word_counts[word] >= 3:  # Word appears 3 or more times
                 return False
                 
         # Check for common incoherent patterns

@@ -8,6 +8,8 @@ import re
 from datetime import datetime
 import os
 import uuid
+import requests
+import random
 
 def load_model_and_vocabulary():
     """Load the trained model and vocabulary"""
@@ -76,7 +78,10 @@ class ChatState:
         self.modification_type = None
         self.active_bookings = {}
         self.last_response = None
-        self.waiting_for_booking_id = False  # New state to track when we're waiting for a booking ID
+        self.waiting_for_booking_id = False
+        self.waiting_for_place_suggestion_city = False
+        self.conversation_emotions = []  # Track emotions throughout conversation
+        self.feedback_given = False  # Track if feedback was requested
 
 def generate_booking_id():
     """Generate a unique booking ID"""
@@ -89,409 +94,377 @@ def extract_booking_id(message):
     match = re.search(pattern, message.upper())
     return match.group(0) if match else None
 
+def analyze_emotion(text):
+    """Analyze emotion using the deployed API"""
+    try:
+        response = requests.post(
+            'http://localhost:8000/predict',  # Changed to use local API
+            json={'text': text}
+        )
+        if response.status_code == 200:
+            return response.json()
+        print(f"Error from emotion API: {response.status_code}")
+        return None
+    except Exception as e:
+        print(f"Error calling emotion API: {str(e)}")
+        return None
+
+def get_emotion_based_response(emotion_result):
+    """Generate emotion-aware response"""
+    if not emotion_result:
+        return "How can I assist you today?"
+        
+    emotion = emotion_result.get('emotion', 'neutral')
+    confidence = emotion_result.get('confidence', 0)
+    
+    # Base responses for different emotions
+    emotion_responses = {
+        'joy': [
+            "I'm glad to hear you're feeling happy! How can I make your day even better?",
+            "Your happiness is contagious! What can I help you with today?",
+            "It's wonderful to hear you're feeling joyful! How may I assist you?"
+        ],
+        'sadness': [
+            "I'm sorry to hear you're feeling down. Is there something specific I can help you with?",
+            "I'm here to help make things better. What would you like to know about our services?",
+            "Let me try to brighten your day. What can I do for you?"
+        ],
+        'anger': [
+            "I understand you're feeling frustrated. Let me help resolve any issues you're facing.",
+            "I'm here to help address your concerns. What's troubling you?",
+            "Let's work together to find a solution. What can I help you with?"
+        ],
+        'fear': [
+            "There's no need to worry. I'm here to help guide you through this.",
+            "Let me help put your mind at ease. What would you like to know?",
+            "I'm here to support you. What can I clarify for you?"
+        ],
+        'surprise': [
+            "I see you're surprised! Is there something specific you'd like to know more about?",
+            "What caught you by surprise? I'm here to help explain things.",
+            "Let me help you understand better. What would you like to know?"
+        ],
+        'neutral': [
+            "How can I assist you today?",
+            "What would you like to know about our services?",
+            "I'm here to help. What can I do for you?"
+        ]
+    }
+    
+    # Get a random response for the detected emotion
+    response = random.choice(emotion_responses.get(emotion, emotion_responses['neutral']))
+    
+    # Add a follow-up question based on the emotion
+    if emotion == 'joy':
+        response += "\nWould you like to know about our special offers or amenities?"
+    elif emotion == 'sadness':
+        response += "\nPerhaps I can tell you about our spa services or room upgrades?"
+    elif emotion == 'anger':
+        response += "\nWould you like to speak with our customer service team?"
+    elif emotion == 'fear':
+        response += "\nWould you like me to explain our safety measures and policies?"
+    elif emotion == 'surprise':
+        response += "\nWould you like to know more about our unique features?"
+    
+    return response
+
+def get_conversation_summary(emotions):
+    """Calculate emotion summary for the entire conversation"""
+    if not emotions:
+        return "No emotions recorded in conversation."
+    
+    emotion_counts = {}
+    for emotion_data in emotions:
+        emotion = emotion_data.get('emotion')
+        if emotion:
+            emotion_counts[emotion] = emotion_counts.get(emotion, 0) + 1
+    
+    summary = "Conversation Emotion Summary:\n"
+    for emotion, count in emotion_counts.items():
+        percentage = (count / len(emotions)) * 100
+        summary += f"- {emotion}: {percentage:.1f}%\n"
+    
+    return summary
+
+def log_conversation_emotions(chat_state):
+    """Log conversation emotions to a JSON file"""
+    log_dir = 'logs'
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    log_file = os.path.join(log_dir, f'emotion_log_{timestamp}.json')
+    
+    log_data = {
+        'timestamp': timestamp,
+        'emotions': chat_state.conversation_emotions,
+        'summary': get_conversation_summary(chat_state.conversation_emotions)
+    }
+    
+    with open(log_file, 'w') as f:
+        json.dump(log_data, f, indent=2)
+    
+    return log_file
+
 def process_user_input(user_input, chatbot, chat_state):
     """Process user input and generate appropriate response"""
     user_input = user_input.lower().strip()
-    
-    # Handle empty input
-    if not user_input:
-        return "Please enter a message."
 
-    # 1. Place suggestions (MUST be first to take precedence)
-    if any(word in user_input for word in ['suggest', 'recommend', 'visit', 'places', 'attractions', 'explore']) or \
-       (chat_state.last_response and 'Which city would you like recommendations for?' in chat_state.last_response):
-        # Extract city from input
-        cities = ['london', 'paris', 'new york', 'tokyo', 'sydney', 'chennai', 'mumbai', 'delhi', 'bangalore']
-        suggested_city = None
-        
-        # First check if a city is mentioned in the input
-        for city in cities:
-            if city in user_input.lower():
-                suggested_city = city
-                break
-        
-        if suggested_city:
-            if suggested_city == 'london':
-                chat_state.last_response = None
-                return "Top attractions in London:\n" \
-                       "1. Big Ben and Houses of Parliament\n" \
-                       "2. Buckingham Palace\n" \
-                       "3. British Museum\n" \
-                       "4. Tower of London\n" \
-                       "5. London Eye"
-            elif suggested_city == 'paris':
-                chat_state.last_response = None
-                return "Must-visit places in Paris:\n" \
-                       "1. Eiffel Tower\n" \
-                       "2. Louvre Museum\n" \
-                       "3. Notre-Dame Cathedral\n" \
-                       "4. Champs-Élysées\n" \
-                       "5. Montmartre"
-            elif suggested_city == 'delhi':
-                chat_state.last_response = None
-                return "Top attractions in Delhi:\n" \
-                       "1. Red Fort (Lal Qila)\n" \
-                       "2. India Gate\n" \
-                       "3. Qutub Minar\n" \
-                       "4. Humayun's Tomb\n" \
-                       "5. Lotus Temple\n" \
-                       "6. Chandni Chowk (Old Delhi)\n" \
-                       "7. Akshardham Temple\n" \
-                       "8. National Museum\n" \
-                       "9. Connaught Place\n" \
-                       "10. Jama Masjid"
-            elif suggested_city == 'mumbai':
-                chat_state.last_response = None
-                return "Must-visit places in Mumbai:\n" \
-                       "1. Gateway of India\n" \
-                       "2. Marine Drive\n" \
-                       "3. Elephanta Caves\n" \
-                       "4. Juhu Beach\n" \
-                       "5. Colaba Causeway\n" \
-                       "6. Bandra-Worli Sea Link\n" \
-                       "7. Chhatrapati Shivaji Terminus\n" \
-                       "8. Haji Ali Dargah\n" \
-                       "9. National Museum of Indian Cinema\n" \
-                       "10. Crawford Market"
-            elif suggested_city == 'bangalore':
-                chat_state.last_response = None
-                return "Top attractions in Bangalore:\n" \
-                       "1. Lalbagh Botanical Garden\n" \
-                       "2. Cubbon Park\n" \
-                       "3. Bangalore Palace\n" \
-                       "4. Tipu Sultan's Summer Palace\n" \
-                       "5. ISKCON Temple\n" \
-                       "6. Vidhana Soudha\n" \
-                       "7. Commercial Street\n" \
-                       "8. MG Road\n" \
-                       "9. Wonderla Amusement Park\n" \
-                       "10. Bannerghatta National Park"
-            elif suggested_city == 'chennai':
-                chat_state.last_response = None
-                return "Must-visit places in Chennai:\n" \
-                       "1. Marina Beach\n" \
-                       "2. Kapaleeshwarar Temple\n" \
-                       "3. Fort St. George\n" \
-                       "4. Santhome Cathedral\n" \
-                       "5. Government Museum\n" \
-                       "6. Elliot's Beach\n" \
-                       "7. Guindy National Park\n" \
-                       "8. Valluvar Kottam\n" \
-                       "9. Birla Planetarium\n" \
-                       "10. T Nagar Shopping District"
-        else:
-            response = "I can suggest places to visit in:\n" \
-                      "- London\n" \
-                      "- Paris\n" \
-                      "- New York\n" \
-                      "- Tokyo\n" \
-                      "- Sydney\n" \
-                      "- Chennai\n" \
-                      "- Mumbai\n" \
-                      "- Delhi\n" \
-                      "- Bangalore\n" \
-                      "Which city would you like recommendations for?"
-            chat_state.last_response = response
-            return response
-
-    # Check if we're waiting for a booking ID
-    if chat_state.waiting_for_booking_id:
-        booking_id = user_input.upper()
-        if re.match(r'^[A-Z0-9]{8}$', booking_id):
-            if booking_id in chat_state.active_bookings:
-                if chat_state.pending_cancellation:
-                    chat_state.pending_cancellation = booking_id
-                    chat_state.waiting_for_booking_id = False
-                    return f"Are you sure you want to cancel booking {booking_id}?\n" \
-                           f"Please confirm with 'yes' or 'no'"
-                elif chat_state.pending_modification:
-                    chat_state.pending_modification = booking_id
-                    chat_state.waiting_for_booking_id = False
-                    return f"What would you like to modify for booking {booking_id}?\n" \
-                           f"Options: dates, number of guests, or city"
-            else:
-                chat_state.waiting_for_booking_id = False
-                return f"Sorry, I couldn't find a booking with ID {booking_id}"
-        else:
-            chat_state.waiting_for_booking_id = False
-            return "Please provide a valid booking ID (8 characters, letters and numbers only)."
-
-    # Handle cancellation confirmation (state-dependent)
+    # 0. Handle pending state first (cancellation, modification, place suggestion city)
     if chat_state.pending_cancellation:
-        if any(word in user_input for word in ['yes', 'confirm', 'proceed']):
-            booking_id = chat_state.pending_cancellation
-            if booking_id in chat_state.active_bookings:
-                del chat_state.active_bookings[booking_id]
-            chat_state.pending_cancellation = None
-            return f"Your booking {booking_id} has been cancelled successfully."
-        elif any(word in user_input for word in ['no', 'cancel', 'keep', 'maybe']):
-            booking_id = chat_state.pending_cancellation
-            chat_state.pending_cancellation = None
-            return f"Cancellation cancelled. Your booking {booking_id} remains active."
-        else:
-            return "Please respond with 'yes' to confirm cancellation or 'no' to keep the booking."
-
-    # Handle modification confirmation (state-dependent)
-    if chat_state.pending_modification:
-        booking_id = chat_state.pending_modification
-        booking = chat_state.active_bookings.get(booking_id)
-        
-        if not booking:
-            chat_state.pending_modification = None
-            return f"Sorry, booking {booking_id} no longer exists."
-            
-        if 'dates' in user_input:
-            dates = extract_booking_details(user_input)
-            if dates and dates.get('check_in') and dates.get('check_out'):
-                chat_state.active_bookings[booking_id]['check_in'] = dates['check_in']
-                chat_state.active_bookings[booking_id]['check_out'] = dates['check_out']
-                chat_state.pending_modification = None
-                return f"Booking {booking_id} dates updated successfully:\n" \
-                       f"New check-in: {dates['check_in']}\n" \
-                       f"New check-out: {dates['check_out']}\n\n" \
-                       f"Updated booking details:\n" \
-                       f"- City: {booking['city'].title()}\n" \
-                       f"- Check-in: {dates['check_in']}\n" \
-                       f"- Check-out: {dates['check_out']}\n" \
-                       f"- Number of guests: {booking['num_people']}"
-            else:
-                return "Please provide new dates in the format: YYYY-MM-DD to YYYY-MM-DD"
-                
-        elif 'guests' in user_input or 'people' in user_input:
-            people_match = re.search(r'(\d+)\s*(?:people|persons|guests)?', user_input)
-            if people_match:
-                new_guest_count = int(people_match.group(1))
-                chat_state.active_bookings[booking_id]['num_people'] = new_guest_count
-                chat_state.pending_modification = None
-                return f"Booking {booking_id} updated successfully:\n" \
-                       f"New number of guests: {new_guest_count}\n\n" \
-                       f"Updated booking details:\n" \
-                       f"- City: {booking['city'].title()}\n" \
-                       f"- Check-in: {booking['check_in']}\n" \
-                       f"- Check-out: {booking['check_out']}\n" \
-                       f"- Number of guests: {new_guest_count}"
-            else:
-                return "Please specify the new number of guests (e.g., 'change to 3 people')"
-                
-        elif 'city' in user_input or any(city in user_input.lower() for city in ['london', 'paris', 'new york', 'tokyo', 'sydney', 'chennai', 'mumbai', 'delhi', 'bangalore']):
-            cities = ['london', 'paris', 'new york', 'tokyo', 'sydney', 'chennai', 'mumbai', 'delhi', 'bangalore']
-            new_city = None
-            for city in cities:
-                if city in user_input.lower():
-                    new_city = city
-                    break
-            if new_city:
-                chat_state.active_bookings[booking_id]['city'] = new_city
-                chat_state.pending_modification = None
-                return f"Booking {booking_id} updated successfully:\n" \
-                       f"New city: {new_city.title()}\n\n" \
-                       f"Updated booking details:\n" \
-                       f"- City: {new_city.title()}\n" \
-                       f"- Check-in: {booking['check_in']}\n" \
-                       f"- Check-out: {booking['check_out']}\n" \
-                       f"- Number of guests: {booking['num_people']}"
-            else:
-                return "Please specify a valid city from our list:\n" \
-                       "- London\n" \
-                       "- Paris\n" \
-                       "- New York\n" \
-                       "- Tokyo\n" \
-                       "- Sydney\n" \
-                       "- Chennai\n" \
-                       "- Mumbai\n" \
-                       "- Delhi\n" \
-                       "- Bangalore"
-        elif any(word in user_input for word in ['show', 'view', 'list', 'my bookings']):
-            chat_state.pending_modification = None  # Reset modification state
-            if not chat_state.active_bookings:
-                return "You don't have any active bookings."
-            
-            response = "Your active bookings:\n"
-            for bid, b in chat_state.active_bookings.items():
-                response += f"\nBooking ID: {bid}\n" \
-                           f"- City: {b['city'].title()}\n" \
-                           f"- Check-in: {b['check_in']}\n" \
-                           f"- Check-out: {b['check_out']}\n" \
-                           f"- Number of guests: {b['num_people']}\n"
-            return response
-        else:
-            return "What would you like to modify?\n" \
-                   "Options: dates, number of guests, or city"
-
-    # Handle booking confirmation (state-dependent)
-    if chat_state.pending_booking and any(word in user_input for word in ['yes', 'confirm', 'correct', 'proceed']):
-        booking = chat_state.pending_booking
-        booking_id = generate_booking_id()
-        chat_state.active_bookings[booking_id] = booking
-        chat_state.pending_booking = None
-        return f"Booking confirmed!\n" \
-               f"Your booking ID is: {booking_id}\n" \
-               f"Please save this ID for future reference.\n\n" \
-               f"Booking details:\n" \
-               f"- City: {booking['city'].title()}\n" \
-               f"- Check-in: {booking['check_in']}\n" \
-               f"- Check-out: {booking['check_out']}\n" \
-               f"- Number of guests: {booking['num_people']}"
-
-    # 1. View bookings query
-    if any(phrase in user_input for phrase in ['show my bookings', 'view my bookings', 'list my bookings', 
-                                             'my bookings', 'show bookings', 'view bookings', 'list bookings',
-                                             'show booking', 'view booking', 'list booking']):
-        if not chat_state.active_bookings:
-            return "You don't have any active bookings."
-        
-        response = "Your active bookings:\n"
-        for booking_id, booking in chat_state.active_bookings.items():
-            response += f"\nBooking ID: {booking_id}\n" \
-                       f"- City: {booking['city'].title()}\n" \
-                       f"- Check-in: {booking['check_in']}\n" \
-                       f"- Check-out: {booking['check_out']}\n" \
-                       f"- Number of guests: {booking['num_people']}\n"
+        booking_id = user_input.strip().upper()
+        response = chatbot.cancel_booking(booking_id)
+        chat_state.active_bookings = {k: v for k, v in chatbot.bookings.items() if v['status'] == 'confirmed'}
+        chat_state.pending_cancellation = False
         return response
-
-    # 2. Cancellation queries (MUST be before booking queries)
-    if any(word in user_input for word in ['cancel', 'cancellation', 'delete']):
-        # First check if there's a booking ID in the input
-        booking_id_match = re.search(r'[A-Z0-9]{8}', user_input.upper())
-        if booking_id_match:
-            booking_id = booking_id_match.group(0)
-            if booking_id in chat_state.active_bookings:
-                chat_state.pending_cancellation = booking_id
-                return f"Are you sure you want to cancel booking {booking_id}?\n" \
-                       f"Please confirm with 'yes' or 'no'"
-            else:
-                return f"Sorry, I couldn't find a booking with ID {booking_id}"
+    if chat_state.pending_modification and chat_state.modification_type:
+        booking_id = chat_state.pending_modification
+        user_message = user_input.strip()
+        # Handle if user just says 'guests' or 'dates'
+        if user_message in ["guests", "number of guests"]:
+            return "Please enter the new number of guests."
+        if user_message in ["dates", "date", "check-in", "check-out"]:
+            return "Please enter the new check-in and check-out dates in YYYY-MM-DD to YYYY-MM-DD format."
+        changes = {}
+        # If user enters just a number, treat as guests
+        if user_message.isdigit():
+            changes['num_people'] = int(user_message)
+        # If user enters two dates (e.g., 2025-12-18 to 2025-12-22)
+        date_pattern = r'(\d{4}-\d{2}-\d{2})'
+        dates = re.findall(date_pattern, user_message)
+        if len(dates) == 2:
+            changes['check_in'] = dates[0]
+            changes['check_out'] = dates[1]
+        # Fallback to previous extraction logic
+        details = extract_booking_details(user_message)
+        if details:
+            if details.get('check_in'):
+                changes['check_in'] = details['check_in']
+            if details.get('check_out'):
+                changes['check_out'] = details['check_out']
+            if details.get('num_people'):
+                changes['num_people'] = details['num_people']
+        people_pattern = r'(\d+)\s*(?:people|persons|guests)'
+        people_match = re.search(people_pattern, user_message.lower())
+        if people_match:
+            changes['num_people'] = int(people_match.group(1))
+        if not changes:
+            return "Please specify the new number of guests (e.g., '4') or the new dates (e.g., '2025-12-18 to 2025-12-22')."
+        response = chatbot.modify_booking(booking_id, **changes)
+        chat_state.active_bookings = {k: v for k, v in chatbot.bookings.items() if v['status'] == 'confirmed'}
+        chat_state.pending_modification = None
+        chat_state.modification_type = None
+        return response
+    if chat_state.pending_modification:
+        booking_id = user_input.strip().upper()
+        if booking_id in chatbot.bookings and chatbot.bookings[booking_id]['status'] == 'confirmed':
+            chat_state.pending_modification = booking_id
+            chat_state.modification_type = True
+            return "What would you like to modify for this booking? (You can provide new dates or number of guests)"
         else:
-            chat_state.waiting_for_booking_id = True
-            chat_state.pending_cancellation = True  # Set a flag to indicate we're waiting for cancellation
-            return "Please provide your booking ID to cancel your reservation."
+            chat_state.pending_modification = None
+            return "Booking ID not found or not active. Please provide a valid Booking ID."
 
-    # 3. Modification queries (MUST be before booking queries)
-    if any(word in user_input for word in ['modify', 'change', 'update', 'edit']):
-        # First check if there's a booking ID in the input
-        booking_id_match = re.search(r'[A-Z0-9]{8}', user_input.upper())
-        if booking_id_match:
-            booking_id = booking_id_match.group(0)
-            if booking_id in chat_state.active_bookings:
-                chat_state.pending_modification = booking_id
-                return f"What would you like to modify for booking {booking_id}?\n" \
-                       f"Options: dates, number of guests, or city"
-            else:
-                return f"Sorry, I couldn't find a booking with ID {booking_id}"
+    # Handle pending place suggestion city
+    if chat_state.waiting_for_place_suggestion_city:
+        city = user_input.strip().lower()
+        chat_state.waiting_for_place_suggestion_city = False # Reset the flag
+        suggestions = chatbot.get_place_suggestions(city)
+        if suggestions and suggestions[0] != "No suggestions available for this city":
+            return f"Here are some places to visit in {city.title()}:\n- " + "\n- ".join(suggestions)
         else:
-            chat_state.waiting_for_booking_id = True
-            chat_state.pending_modification = True  # Set a flag to indicate we're waiting for modification
-            return "Please provide your booking ID to modify your reservation."
+            return f"Sorry, I don't have specific place suggestions for {city.title()} yet."
 
-    # 4. Booking related queries
-    if any(word in user_input for word in ['book', 'booking', 'reserve', 'reservation']):
+    print(f"[DEBUG] User input for intent detection: {user_input}")
+
+    # 1. Rule-based intent detection for FAQs and specific tasks
+    intent = None
+    # Check for specific intents in order of priority
+    if any(word in user_input for word in ["show bookings", "my bookings", "view bookings", "list bookings", "show booking", "my booking", "view booking", "list booking"]):
+        intent = "show_bookings"
+    elif any(word in user_input for word in ["cancel", "cancellation"]):
+        intent = "cancel"
+    elif any(word in user_input for word in ["modify", "change", "update"]):
+        intent = "modify"
+    elif any(word in user_input for word in ["place suggestion", "attraction", "sightseeing", "what to see", "best places", "places nearby"]):
+        intent = "place_suggestion"
+    elif any(word in user_input.split() for word in ["complaint", "angry", "bad", "disgusting", "dirty", "disappointed", "dissatisfied", "unhappy", "problem", "disliked"]):
+        intent = "complaint"
+    elif any(word in user_input for word in ["feedback", "suggestion", "suggest"]):
+        intent = "feedback_suggestion"
+    elif any(word in user_input for word in ["book", "reservation", "reserve", "room"]):
+        intent = "booking"
+    elif any(word in user_input for word in ["wifi", "internet"]):
+        intent = "wifi"
+    elif any(word in user_input for word in ["facility", "facilities", "amenities", "services"]):
+        intent = "facilities"
+    elif any(word in user_input for word in ["pet", "pets", "dog", "cat", "animal"]):
+        intent = "pet_policy"
+    elif any(word in user_input for word in ["child", "children", "kid", "kids", "infant", "baby"]):
+        intent = "children_policy"
+    elif any(word in user_input for word in ["gym", "fitness", "workout"]):
+        intent = "gym"
+    elif any(word in user_input for word in ["pool", "swimming pool"]):
+        intent = "pool"
+    elif any(word in user_input for word in ["parking", "car park", "garage"]):
+        intent = "parking"
+    elif any(word in user_input for word in ["checkin", "check-in", "checkout", "check-out", "check in", "check out", "timing", "time"]):
+        intent = "checkin_checkout"
+    # Add more intents as needed
+
+    print(f"[DEBUG] Detected intent: {intent}")
+
+    # 2. Handle detected intents
+    if intent == "booking":
         booking_details = extract_booking_details(user_input)
         if booking_details:
-            chat_state.pending_booking = booking_details
-            return f"I found these booking details:\n" \
-                   f"- City: {booking_details['city'].title()}\n" \
-                   f"- Check-in: {booking_details['check_in']}\n" \
-                   f"- Check-out: {booking_details['check_out']}\n" \
-                   f"- Number of guests: {booking_details['num_people']}\n\n" \
-                   f"Would you like to confirm this booking?"
+            response = chatbot.handle_booking(
+                booking_details['check_in'],
+                booking_details['check_out'],
+                booking_details['city'],
+                booking_details['num_people']
+            )
+            # Sync bookings between chatbot and chat_state
+            chat_state.active_bookings = {k: v for k, v in chatbot.bookings.items() if v['status'] == 'confirmed'}
+            return response
         else:
-            return "To book a hotel, please provide:\n" \
-                   "- City (e.g., London, Paris, New York)\n" \
-                   "- Check-in date (YYYY-MM-DD)\n" \
-                   "- Check-out date (YYYY-MM-DD)\n" \
-                   "- Number of guests\n\n" \
-                   "Example: I want to book a hotel in London for 2 people from 2024-03-01 to 2024-03-05"
-
-    # 5. Children related queries
-    if any(word in user_input for word in ['child', 'children', 'kid', 'kids', 'baby', 'babies']):
-        if 'policy' in user_input or 'age' in user_input:
-            return "Children under 12 stay free when sharing existing bedding. Extra beds are available for children aged 12-17 at an additional charge."
-        elif 'play' in user_input or 'activity' in user_input:
-            return "We offer various children's activities including:\n" \
-                   "- Kids' play area\n" \
-                   "- Swimming pool with children's section\n" \
-                   "- Board games and video games\n" \
-                   "- Daily supervised activities (ages 4-12)"
+            return "To book a hotel, please provide:\n- City (e.g., London, Paris, New York)\n- Check-in date (YYYY-MM-DD)\n- Check-out date (YYYY-MM-DD)\n- Number of guests\n\nExample: I want to book a hotel in London for 2 people from 2024-03-01 to 2024-03-05"
+    elif intent == "wifi":
+        return "Yes, we provide complimentary high-speed WiFi in all rooms and public areas."
+    elif intent == "facilities":
+        return "We offer a gym, pool, spa, in-room dining, and more. What would you like to know about?"
+    elif intent == "complaint":
+        print("[DEBUG] Handling complaint intent.")
+        return "I'm very sorry to hear you're having a problem. Your feedback is important to us. Could you please provide more details so I can see how I can help, or would you like me to connect you with a member of our staff?"
+    elif intent == "pet_policy":
+        return "Yes, we are pet-friendly! Please let us know if you'll be bringing a pet so we can prepare accordingly."
+    elif intent == "children_policy":
+        return "Yes, children are welcome! Please let us know their ages for the best room options."
+    elif intent == "gym":
+        return "Yes, we have a fully equipped gym available for all guests from 6am to 10pm."
+    elif intent == "pool":
+        return "Yes, we have a swimming pool available for all guests from 6am to 10pm."
+    elif intent == "parking":
+        return "Yes, we offer free parking for our guests. Please let us know if you need a parking spot reserved."
+    elif intent == "checkin_checkout":
+        return "Our standard check-in time is 2:00 PM and check-out time is 12:00 PM. Early check-in and late check-out are subject to availability."
+    elif intent == "place_suggestion":
+        chat_state.waiting_for_place_suggestion_city = True
+        return "Please specify the city you're interested in getting place suggestions for."
+    elif intent == "feedback_suggestion":
+        return "Thank you for wanting to provide feedback or a suggestion. Please tell me more about it."
+    elif intent == "show_bookings":
+        # Always show active bookings from chatbot.bookings
+        active_bookings = {k: v for k, v in chatbot.bookings.items() if v['status'] == 'confirmed'}
+        if active_bookings:
+            bookings = "\n".join([
+                f"Booking ID: {bid}, City: {b['city'].title()}, Check-in: {b['check_in']}, Check-out: {b['check_out']}, Guests: {b['num_people']}" 
+                for bid, b in active_bookings.items()
+            ])
+            return f"Here are your active bookings:\n{bookings}"
         else:
-            return "For children, we offer:\n" \
-                   "- Free stay for under 12s\n" \
-                   "- Kids' play area\n" \
-                   "- Children's menu\n" \
-                   "- Babysitting services (additional charge)\n" \
-                   "Would you like more specific information?"
-
-    # 6. Amenities/Facilities queries
-    if any(word in user_input for word in ['amenity', 'amenities', 'facility', 'facilities', 'wifi', 'pool', 'gym', 'spa']):
-        if 'wifi' in user_input:
-            return "Yes, we provide complimentary high-speed WiFi throughout the hotel, including all rooms and public areas."
-        elif 'pool' in user_input:
-            return "We have both indoor and outdoor swimming pools. The indoor pool is heated and available year-round."
-        elif 'gym' in user_input:
-            return "Our 24/7 fitness center includes:\n" \
-                   "- Modern cardio equipment\n" \
-                   "- Weight training area\n" \
-                   "- Yoga studio\n" \
-                   "- Personal training available"
-        elif 'spa' in user_input:
-            return "Our spa offers:\n" \
-                   "- Massage treatments\n" \
-                   "- Facial treatments\n" \
-                   "- Sauna and steam room\n" \
-                   "- Beauty services"
+            return "You have no active bookings."
+    elif intent == "cancel":
+        # If waiting for booking ID from previous prompt
+        if chat_state.pending_cancellation:
+            booking_id = user_input.strip().upper()
+            response = chatbot.cancel_booking(booking_id)
+            chat_state.active_bookings = {k: v for k, v in chatbot.bookings.items() if v['status'] == 'confirmed'}
+            chat_state.pending_cancellation = False
+            return response
+        # Try to extract booking ID from current message
+        booking_id = extract_booking_id(user_input)
+        if booking_id:
+            response = chatbot.cancel_booking(booking_id)
+            chat_state.active_bookings = {k: v for k, v in chatbot.bookings.items() if v['status'] == 'confirmed'}
+            return response
         else:
-            return "Our hotel amenities include:\n" \
-                   "- Free WiFi\n" \
-                   "- Swimming pools (indoor & outdoor)\n" \
-                   "- 24/7 Fitness center\n" \
-                   "- Spa and wellness center\n" \
-                   "- Restaurant and bar\n" \
-                   "- Business center\n" \
-                   "- Room service\n" \
-                   "Would you like details about any specific amenity?"
-
-    # 7. Hotel Policies
-    if any(word in user_input for word in ['policy', 'policies', 'rules', 'terms', 'conditions']):
-        if 'check' in user_input and ('in' in user_input or 'out' in user_input):
-            return "Check-in and Check-out Policies:\n" \
-                   "- Check-in time: 3:00 PM\n" \
-                   "- Check-out time: 11:00 AM\n" \
-                   "- Early check-in and late check-out available upon request (subject to availability)\n" \
-                   "- Valid ID and credit card required at check-in"
-        elif 'cancellation' in user_input:
-            return "Cancellation Policy:\n" \
-                   "- Free cancellation up to 24 hours before check-in\n" \
-                   "- Late cancellation or no-show: One night's stay will be charged\n" \
-                   "- Special rates and packages may have different cancellation policies"
-        elif 'payment' in user_input:
-            return "Payment Policies:\n" \
-                   "- We accept all major credit cards\n" \
-                   "- A valid credit card is required to guarantee your reservation\n" \
-                   "- Pre-payment may be required for certain rates\n" \
-                   "- Additional charges may apply for extra services"
-        elif 'pet' in user_input:
-            return "Pet Policy:\n" \
-                   "- Pets are welcome in designated pet-friendly rooms\n" \
-                   "- Pet fee: $50 per stay\n" \
-                   "- Maximum 2 pets per room\n" \
-                   "- Pets must be leashed in public areas"
-        elif 'dining' in user_input or 'food' in user_input:
-            return "Dining Policies:\n" \
-                   "- 24/7 room service available\n" \
-                   "- Breakfast served 6:00 AM - 10:00 AM\n" \
-                   "- Restaurant open 11:00 AM - 11:00 PM\n" \
-                   "- Special dietary requirements can be accommodated with advance notice"
+            chat_state.pending_cancellation = True
+            return "Please provide the Booking ID you want to cancel."
+    elif intent == "modify":
+        # If waiting for modification details
+        if chat_state.pending_modification and chat_state.modification_type:
+            booking_id = chat_state.pending_modification
+            user_message = user_input.strip()
+            # Handle if user just says 'guests' or 'dates'
+            if user_message in ["guests", "number of guests"]:
+                return "Please enter the new number of guests."
+            if user_message in ["dates", "date", "check-in", "check-out"]:
+                return "Please enter the new check-in and check-out dates in YYYY-MM-DD to YYYY-MM-DD format."
+            changes = {}
+            # If user enters just a number, treat as guests
+            if user_message.isdigit():
+                changes['num_people'] = int(user_message)
+            # If user enters two dates (e.g., 2025-12-18 to 2025-12-22)
+            date_pattern = r'(\d{4}-\d{2}-\d{2})'
+            dates = re.findall(date_pattern, user_message)
+            if len(dates) == 2:
+                changes['check_in'] = dates[0]
+                changes['check_out'] = dates[1]
+            # Fallback to previous extraction logic
+            details = extract_booking_details(user_message)
+            if details:
+                if details.get('check_in'):
+                    changes['check_in'] = details['check_in']
+                if details.get('check_out'):
+                    changes['check_out'] = details['check_out']
+                if details.get('num_people'):
+                    changes['num_people'] = details['num_people']
+            people_pattern = r'(\d+)\s*(?:people|persons|guests)'
+            people_match = re.search(people_pattern, user_message.lower())
+            if people_match:
+                changes['num_people'] = int(people_match.group(1))
+            if not changes:
+                return "Please specify the new number of guests (e.g., '4') or the new dates (e.g., '2025-12-18 to 2025-12-22')."
+            response = chatbot.modify_booking(booking_id, **changes)
+            chat_state.active_bookings = {k: v for k, v in chatbot.bookings.items() if v['status'] == 'confirmed'}
+            chat_state.pending_modification = None
+            chat_state.modification_type = None
+            return response
+        # If waiting for booking ID
+        if chat_state.pending_modification:
+            booking_id = user_input.strip().upper()
+            if booking_id in chatbot.bookings and chatbot.bookings[booking_id]['status'] == 'confirmed':
+                chat_state.pending_modification = booking_id
+                chat_state.modification_type = True
+                return "What would you like to modify for this booking? (You can provide new dates or number of guests)"
+            else:
+                chat_state.pending_modification = None
+                return "Booking ID not found or not active. Please provide a valid Booking ID."
+        # Try to extract booking ID from current message
+        booking_id = extract_booking_id(user_input)
+        if booking_id and booking_id in chatbot.bookings and chatbot.bookings[booking_id]['status'] == 'confirmed':
+            chat_state.pending_modification = booking_id
+            chat_state.modification_type = True
+            return "What would you like to modify for this booking? (You can provide new dates or number of guests)"
         else:
-            return "Our main hotel policies include:\n" \
-                   "1. Check-in/Check-out\n" \
-                   "2. Cancellation\n" \
-                   "3. Payment\n" \
-                   "4. Pet Policy\n" \
-                   "5. Dining\n" \
-                   "Which policy would you like to know more about?"
+            chat_state.pending_modification = True
+            chat_state.modification_type = None
+            return "Please provide the Booking ID you want to modify."
 
-    # For all other cases, use the neural model's response
-    neural_response = chatbot.process_message(user_input)
-    return neural_response
+    # 3. Fallback: Use neural model for complex queries or unmatched intents
+    response = chatbot.process_message(user_input)
+
+    # Handle emotion/feedback if no specific intent was matched and fallback didn't handle it
+    feedback_keywords = [
+        'happy', 'sad', 'angry', 'disgust', 'disgusting', 'confused', 'surprised', 'bad', 'good', 'excellent',
+        'worst', 'best', 'love', 'hate', 'feedback', 'suggestion', 'improve', 'satisfied', 'unsatisfied',
+        'disappointed', 'amazing', 'awesome', 'terrible', 'awful', 'frustrated', 'upset', 'thank you', 'thanks'
+    ]
+    if intent is None and any(word in user_input for word in feedback_keywords):
+        emotion_result = analyze_emotion(user_input)
+        if emotion_result:
+            chat_state.conversation_emotions.append(emotion_result)
+            emotion_response = get_emotion_based_response(emotion_result)
+            negative_emotions = ['sadness', 'anger', 'fear', 'disgust']
+            if emotion_result.get('emotion') in negative_emotions and not chat_state.feedback_given:
+                chat_state.feedback_given = True
+                emotion_response += "\nI notice you seem to be experiencing some negative emotions. Would you like to provide feedback on how we can improve our service?"
+            # If emotion is detected and no specific intent was matched, return emotion response
+            return emotion_response
+
+    # If no specific intent was matched and no emotion was detected (or emotion didn't trigger a specific response), return neural model response
+    return response
 
 def main():
     print("Hi, I am Questa, your friend in need for hotel assistant!")
